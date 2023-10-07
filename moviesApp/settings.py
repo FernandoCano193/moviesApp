@@ -25,13 +25,14 @@ SECRET_KEY = 'django-insecure-gn0*l(7s!na_^us5%$kpy63y*5&wo63cil1va+t7j3ej0$dy)#
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['prograweb.ddns.net', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['prograweb.ddns.net', 'localhost', '127.0.0.1','selvinweb.ddns.net']
 
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    "moviesApp.apps.MoviesConfig",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
