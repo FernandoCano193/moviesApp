@@ -32,7 +32,7 @@ ALLOWED_HOSTS = ['prograweb.ddns.net', 'localhost', '127.0.0.1','selvinweb.ddns.
 # Application definition
 
 INSTALLED_APPS = [
-    "moviesApp.apps.MoviesConfig",
+    'movies.apps.MoviesConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
