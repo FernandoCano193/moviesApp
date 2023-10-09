@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
 
+
 class Genre(models.Model):
     name = models.CharField(max_length=200)
 
@@ -18,9 +19,15 @@ class Job(models.Model):
 
 class Person(models.Model):
     name = models.CharField(max_length=128)
+    character = models.CharField(max_length=200, null=True)
+    gender = models.CharField(max_length=10,null=True)
+    photo_path = models.URLField(blank=True)
+    birth_date = models.DateField(null=True)
+    place_birth = models.CharField(max_length=200, blank=True)
+    biography = models.CharField(max_length=600, blank=True)
 
     def __str__(self):
-        return self.name
+        return f"{self.name} ({self.character})"
 
 
 class Movie(models.Model):
@@ -45,7 +52,8 @@ class MovieCredit(models.Model):
     job = models.ForeignKey(Job, on_delete=models.CASCADE)
 
     def __str__(self):
-        return 'Person {0}, movie: {1}'.format(self.person, self.movie)
+        return f"{self.movie.title}: {self.person.name} ({self.job.name})"
+
 
 class MovieReview(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
