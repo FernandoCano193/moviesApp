@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-gn0*l(7s!na_^us5%$kpy63y*5&wo63cil1va+t7j3ej0$dy)#
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['prograweb.ddns.net', 'localhost', '127.0.0.1','selvinweb.ddns.net']
+ALLOWED_HOSTS = ['prograweb.ddns.net','127.0.0.1','selvinweb.ddns.net']
 
 
 
@@ -77,8 +77,12 @@ WSGI_APPLICATION = 'moviesApp.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'django_bootstrap',
+        'USER': 'ubuntu',
+        'PASSWORD':'password',
+        'HOST': '127.0.0.1',
+        'PORT':'5432',
     }
 }
 
