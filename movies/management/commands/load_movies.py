@@ -10,6 +10,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         jobs = ['Director', 'Producer', 'Actor', 'Voice Actor']
         genres = ['Action', 'Adventure', 'Animation', 'Drama', 'Science Fiction', 'Thriller']
+        movies = ['Rey leon', 'La sirenita', 'Mad Max 4', 'El irlandes', 'El padrino', 'Sangre por sangre', 'Corazones de hierro']
 
         for name in genres:
             g = Genre(name=name)
@@ -28,6 +29,17 @@ class Command(BaseCommand):
                    revenue=0,
                    poster_path='')
         m1.save()
+
+        for mov in range(len(movies)):
+            m = Movie(title= movies[mov], overview='Texto generico de pelicula',
+            release_date=datetime(23, 9, (mov + 1), tzinfo=timezone.utc),
+            running_time=(mov)*30,
+            budget= 80_000_000,
+            tmdb_id=670292 + (mov + 1),
+            revenue=0,
+            poster_path='')
+            m.save()
+
         j = Job.objects.get(name='Actor')
 
         for name in ['John David Washington',
