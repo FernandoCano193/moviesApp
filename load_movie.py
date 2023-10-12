@@ -5,8 +5,8 @@ import requests
 
 env = environ.Env()
 environ.Env.read_env('.env')
-print('API_KEY: ', env('API_KEY'))
-print('API_TOKEN: ', env('API_TOKEN'))
+print('CLAVE_API: ', env('CLAVE_API'))
+print('TOKEN_API: ', env('TOKEN_API'))
 
 '''
 url --request GET \
@@ -16,7 +16,7 @@ url --request GET \
 '''
 headers = {
     "accept": "application/json",
-    "Authorization": f"Bearer {env('API_TOKEN')}"}
+    "Authorization": f"Bearer {env('TOKEN_API')}"}
 
 movie_id = 76341
 r = requests.get(f'https://api.themoviedb.org/3/movie/{movie_id}?language=en-US', headers=headers) 
