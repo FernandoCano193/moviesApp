@@ -14,3 +14,8 @@ def movie_detail(request, movie_id):
     movie = Movie.objects.get(pk=movie_id)
     context = {'movie': movie}
     return render(request, "movies/movie_detail.html", context=context)
+
+def prueba(request):
+    #movie = Movie.objects.get(pk=movie_id)
+    #context = {'movie': movie}
+    return render(request, "movies/basic2.html")

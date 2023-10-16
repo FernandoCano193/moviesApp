@@ -4,10 +4,10 @@
         <title>{{movie.title}}</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="css/style.css" rel="stylesheet">
+        <link href="moviesApp/output.css" rel="stylesheet">
     </head>
     <body>
-        <h1> {{ movie.title }} ({{ movie.release_date|date:"Y" }}) </h1>   
-        <p> {{ movie.overview }} </p>
+        <h1 class="text-4xl"> {{ movie.title }} ({{ movie.release_date|date:"Y" }}) </h1>   
+        <p class="text-4xl"> {{ movie.overview }} </p>
     </body>
 </html>
