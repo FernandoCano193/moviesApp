@@ -61,3 +61,6 @@ class MovieReview(models.Model):
     rating = models.PositiveSmallIntegerField(validators=[MinValueValidator(1),
                                                           MaxValueValidator(100)])
     review = models.TextField(blank=True)
+
+    def __str__(self):
+        return f"{self.user}: {self.movie.title} rating: ({self.rating})"
