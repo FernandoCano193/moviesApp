@@ -3,6 +3,7 @@ import environ
 import psycopg2
 from pathlib import Path
 import json
+import sys
 
 BASE_DIR = Path(__file__).resolve().parent
 
@@ -38,133 +39,183 @@ def getGenreApi():
     
     return listGenre
     
-def getIDMovies():
-    url = "https://api.themoviedb.org/3/discover/movie"
-    
+
+def getCredits(idMovie):
+    url = f"https://api.themoviedb.org/3/movie/{idMovie}/credits"
     data = getDataAPI(url)
 
-    listID = []
+    cast = data['cast'][:10]
+    crew = data['crew'][:5]
 
-    for movie in data['results']:
-        listID.append((movie['id']))
+    credits = cast + crew
+    return credits
+
+
+def getPersonData(idPerson, character):
+    gender = None
+    photo = None
+    url = f"https://api.themoviedb.org/3/person/{idPerson}"
+    data = getDataAPI(url)
+
+    if data.get('gender')==0:
+        gender = "Not set"
+    elif data.get('gender')==1:
+        gender = "Female"
+    elif data.get('gender')==2:
+        gender = "Male"
+    else:
+        gender = "Non-binary"
     
-    return listID
+    if data.get('profile_path') is not None:
+        photo = path_image+data.get('profile_path')
+    else:
+        photo = "N/A"
 
-def getPersonData():
-    listIdMovies = getIDMovies()
-    dataPersons=[]
+    personData=(data.get('name'), character, gender, photo, data.get('birth_date'), data.get('place_birth'), data.get('biography'))
+    return personData
+
+
+def getJobs(credits):
     jobs =[]
-
-    # se recuperan los id de las personas
-    for id in listIdMovies:
-        url = f"https://api.themoviedb.org/3/movie/{id}/credits"
-        data = getDataAPI(url)
-        jobs = getJobs(data)
-        for person in data['cast']:
-            gender = person.get('gender')
-            if gender == 0:
-                gender = "Not set"
-            elif gender == 1:
-                gender = "Female"
-            elif gender == 2:
-                gender = "Male"
-            else:
-                gender = "Non-binary"
-            
-            if person.get('profile_path') is not None:
-                full_path = path_image + person.get('profile_path')
-            else:
-                full_path = "N/A"
-                
-
-            dataPersons.append((person.get('name'), person.get('character'), gender, full_path))
+    for job in credits:
+        if not job.get('job'):
+            if "Actor" not in jobs: jobs.append("Actor")
+        else:
+            if job.get('job'): jobs.append(job.get('job'))
     
-    
-    return dataPersons, jobs
-
-
-def getJobs(data):
-    jobs =["Actor"]
-
-    for job in data['crew']:
-        if(job.get('job') not in jobs):
-            jobs.append(job.get('job'))
-
     return jobs
+
+def load_movie(id):
+    url = f"https://api.themoviedb.org/3/movie/{id}"
+    data = getDataAPI(url)
+    # # print(json.dumps(data, indent=4))
     
+    credits = getCredits(id)
 
-
-
-def getDataMovie():
-    listID = getIDMovies()
-    dataMovies=[]
-    listMovies=[]
-    for id in listID:
-        url =f"https://api.themoviedb.org/3/movie/{id}"
-        data = getDataAPI(url)
-        dataMovies = (data.get('title'),data.get('overview'), data.get('release_date'), data.get('runtime')
-                    ,data.get('budget'),data.get('id'),data.get('revenue'), path_image+data.get('poster_path'))
-        listMovies.append(dataMovies)
-
-    print(json.dumps(data, indent=4))
-
+    try:
+        # CONEXION A LA BD
+        connect = psycopg2.connect(
+            host=env("HOST"),
+            database=env("DATABASE_NAME"),
+            user=env("USER"),
+            password=env("PASSWORD"),
+            port=env("PORT"))
         
+        #Se crea el cursor
+        cur = connect.cursor()
 
-try:
-    # CONEXION A LA BD
-    connect = psycopg2.connect(
-        host=env("HOST"),
-        database=env("DATABASE_NAME"),
-        user=env("USER"),
-        password=env("PASSWORD"),
-        port=env("PORT"))
+        cur.execute("SELECT * FROM movies_genre")
+        listGenresBD = cur.fetchall()
+
+        if not listGenresBD:
+            genres = getGenreApi()
+            #Genera una tupla para poder insertar los valores
+            listGenre = [(genre,) for genre in genres]
+            sqlQuery = "INSERT INTO movies_genre (name) VALUES (%s);"
+            cur.executemany(sqlQuery, listGenre)
+        
+        listGenre = []
+        for gnresName in data.get('genres'):
+            listGenre.append(gnresName.get('name'))
+        
+        # Se recuperan los id de los genres y se almacenan en idGenres
+        sqlQuery=("SELECT id FROM movies_genre WHERE name = ANY(%s)")
+        cur.execute(sqlQuery, (listGenre,))
+        idGenres = cur.fetchall()
+
+        print(idGenres)
+
+        # ----- JOBS ------
+        cur.execute("SELECT name FROM movies_job")
+        
+        #lista de trabajos existentes en la bd
+        existingJobs = cur.fetchall()
+        print(existingJobs)
+
+        # lista de los trabajos en credits
+        listJobs = getJobs(credits=credits)
+
+        #Genera una tupla para poder hacer la comparacion
+        listJobs=[(job,) for job in listJobs]
+        print(listJobs)
+
+        newJobs=[]
+
+        for job in listJobs:
+            if job not in existingJobs:
+                newJobs.append(job)
+
+
+        if newJobs:
+            sqlQuery = "INSERT INTO movies_job (name) VALUES (%s);"
+            cur.executemany(sqlQuery, newJobs)
+
+        sqlQuery = "SELECT id FROM movies_job WHERE name = ANY(%s)"
+        cur.execute(sqlQuery, (listJobs,))
+        idJobs = cur.fetchall()
+        print(idJobs)
+
+        # ----- PERSONS -----
+        
+        personData=[]
+        for person in credits:
+            if person.get('character') is not None:
+                personData.append(getPersonData(person.get('id'), person.get('character')))
+            else:
+                personData.append(getPersonData(person.get('id'), person.get('department')))
+        
+        sqlQuery = "INSERT INTO movies_person (name, character, gender, photo_path, birth_date, place_birth, biography) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+
+        # Ejecuta la inserción
+        cur.executemany(sqlQuery, personData)
+
+
+        # ------ Movie ------
+        sqlQuery = """INSERT INTO movies_movie (title, overview, release_date, 
+        running_time, budget, tmdb_id, revenue, poster_path) VALUES (%s, %s, %s, %s,
+        %s, %s, %s, %s) RETURNING id"""
+
+        movieData = (data['title'], data['overview'], data['release_date'], 
+                     data['runtime'], data['budget'], data['id'], data['revenue'], path_image+data['poster_path'])
+
+        print(movieData)
+
+        cur.execute(sqlQuery, movieData)
+        idMovie = cur.fetchone()
+
+        # ----- MovieGeneres ------
+        for genre in idGenres:
+            sqlQuery = """INSERT INTO movies_movie_genres (movie_id, genre_id) VALUES (%s, %s)"""
+            cur.execute(sqlQuery, (idMovie, genre))
+
+        # ----- MovieCredit -----
+        job = None
+        for credit in credits:
+            sqlQuery =  """INSERT INTO movies_moviecredit (movie_id, person_id, job_id)
+         SELECT movies_movie.id,
+         (SELECT id FROM movies_person WHERE name = %s LIMIT 1) as person_id,
+         (SELECT id FROM movies_job WHERE name = %s LIMIT 1) as job_id
+         FROM movies_movie 
+         WHERE title = %s"""
+            if credit.get('job') is None:
+                job="Actor"
+            else:
+                job=credit.get('job')
+            cur.execute(sqlQuery, (credit.get('name'), job, data['title']))
+
+        #Confirma la transacción
+        connect.commit()
+
+        print("Correcta conexión")
+
     
-    #Se crea el cursor
-    cur = connect.cursor()
-
-
-    # ----- INSERCION A LA BD DE LOS GENEROS -----
-
-    listGenre = getGenreApi()
-
-    #Genera una tupla para poder insertar los valores
-    listGenre = [(genre,) for genre in listGenre]
-    sqlQuery = "INSERT INTO movies_genre (name) VALUES (%s);"
+    except Exception as Error:
+        print(Error)
+    finally:
+        if cur and connect is not None:
+            #Cierre de la conexion de la bd
+            cur.close()
+            connect.close()
     
-    # Ejecuta la consulta
-    cur.executemany(sqlQuery,listGenre)
-
-    # ----- INSERCION A LA BD DE LOS TRABAJOS -----
-    listPersons, listJobs = getPersonData()
-    listJobs = [(job,) for job in listJobs]
-    sqlQuery = "INSERT INTO movies_job (name) VALUES (%s);"
-    cur.executemany(sqlQuery, listJobs)
-
-    # ----- INSERCION A LA BD DE LAS PERSONAS
-    listPersons = getPersonData()
-    sqlQuery = "INSERT INTO movies_person (name, character, gender, photo_path, birth_date, biography,place_birth) VALUES (%s, %s, %s, %s, '2023-10-16', 'biography', 'place_birth');"
-    cur.executemany(sqlQuery, listPersons)
-
-    # ----- INSERCION A LA BD DE LAS PELICULAS
-
-
-    # ----- INSERCION A LA BD DE LAS RELACIONES
-    
-
-    #Confirma la transacción
-    connect.commit()
-
-    print("Correcta conexión")
-
-    
-except Exception as Error:
-    print(Error)
-finally:
-    if cur and connect is not None:
-        #Cierre de la conexion de la bd
-        cur.close()
-        connect.close()
-
-
-
-
+if __name__ == "__main__":
+    load_movie(sys.argv[1])
