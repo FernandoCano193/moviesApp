@@ -12,3 +12,5 @@ Preview de archivo html usando tailwind:
 
 
 <img src="{% static 'movies/assets/img'|add:movie.poster_path %}" alt="">
+
+return render(request, "movies/movie_detail.html", context=context)
