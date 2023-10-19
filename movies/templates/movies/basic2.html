@@ -16,11 +16,11 @@
         <div class="flex h-[32rem] bg-slate-200 my-4">
             <img class="" src="img/imigame.jpg" alt="the imitation game poster">
             <header>
-            <h1 class="movie-title"> The Imitation Game</h1>
+            <h1 class="movie-title"> {{ movie.title }}</h1>
             <div class="movie-info">
                 <p>  12/19/2014 -</p> 
                 <ul class="movie-genre"> 
-                    <li> History | </li>
+                    <li> {{ movie.genres}} | </li>
                     <li> Drama | </li>
                     <li> Thriller | </li>
                     <li> War </li>
@@ -29,12 +29,8 @@
             </div>         
             
             <h1>Overview</h1>
-            <p>Based on the real life story of legendary cryptanalyst Alan
-            Turing, the film portrays the nail-biting race against time by
-            Turing and his brilliant team of code-breakers at Britain's
-            top-secret Government Code and Cypher School at Bletchley Park,
-            during the darkest days of World War II.</p>
-
+            <p>{{ movie.overview }}</p>
+            <img src="{% static 'movies/assets/img/'|add:movie.poster_path %}" alt="imagen">
             <details>
                 <summary>Production Details</summary>
                 <p> Budget: $14,000,000.00 </p>
@@ -46,11 +42,22 @@
         <h1>Top Billed Cast</h1>
         <div class=""> 
             <div class="text-3xl"> 
-                <img src="img/cumberbatch.jpg" alt="Benedict Cumberbatch photo">
-                <h1> Benedict Cumberbatch</h1>
+                <p><a href="github.com\miusuario\elrepo"> GitHub Repository</a></p>
             </div>
             <div class="font-medium"> 
-                <img src="{% static 'movies/assets/img/'|add:movie.poster_path %}" alt="imagen">
+                {% for m in movie_credits %}
+                    {% if movie.title|slugify == m.movie|slugify %}
+                        {% for p in person %}
+                            {% if m.person|slugify == p.name|slugify %}  
+                                <p>---------------------------------------------------</p>  
+                                <p><a href="/person/{{p.id}}/">Persona: {{p.name}}</a></p>
+                                <p>Puesto: {{m.job}}</p>
+                                <p>Character: {{p.character}}</p>
+                                <p>---------------------------------------------------</p>  
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
                 <h1> Keira Knightley</h1>
             </div>
         </div>

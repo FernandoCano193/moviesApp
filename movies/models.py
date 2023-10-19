@@ -27,7 +27,7 @@ class Person(models.Model):
     biography = models.CharField(max_length=600, blank=True)
 
     def __str__(self):
-        return f"{self.name} ({self.character})"
+        return f"{self.name}"
 
 
 class Movie(models.Model):

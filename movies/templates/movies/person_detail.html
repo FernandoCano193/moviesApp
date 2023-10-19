@@ -1,0 +1,17 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>{{person.name}}</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="{% static 'moviesApp/output.css'%}" rel="stylesheet">
+        
+    </head>
+    <body>
+        <h1 class="text-4xl"> {{ person.name }} ({{ person.birth_date|date:"M/D/Y" }}) </h1>   
+        <p class="text-4xl"> {{ person.character }} </p>
+        <p class="text-4xl">{{person.photo_path}}</p>
+        <img src="{% static 'movies/assets/img/'|add:person.photo_path %}" alt="">
+    </body>
+</html>
