@@ -9,9 +9,15 @@
         
     </head>
     <body>
-        <h1 class="text-4xl"> {{ person.name }} ({{ person.birth_date|date:"M/D/Y" }}) </h1>   
-        <p class="text-4xl"> {{ person.character }} </p>
-        <p class="text-4xl">{{person.photo_path}}</p>
+        <h1 class="text-4xl"> Nombre: {{ person.name }} Cumpleaños: ({{ person.birth_date|date:"D/M/Y" }}) </h1>
+        {% if person.gender == 'M' %}
+            <p class="text-4xl"> Genero: Masculino </p>
+        {% else %}
+            <p class="text-4xl"> Genero: Femenino </p>
+        {% endif %}   
+        <p class="text-4xl"> Interpreta: {{ person.character }} </p>
+        <p class="text-4xl">Lugar de nacimiento: {{person.place_birth}}</p>
         <img src="{% static 'movies/assets/img/'|add:person.photo_path %}" alt="">
+        <p class="text-4xl">Biografia: {{person.biography}}</p>
     </body>
 </html>

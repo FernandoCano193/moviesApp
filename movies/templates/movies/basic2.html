@@ -18,23 +18,21 @@
             <header>
             <h1 class="movie-title"> {{ movie.title }}</h1>
             <div class="movie-info">
-                <p>  12/19/2014 -</p> 
-                <ul class="movie-genre"> 
-                    <li> {{ movie.genres}} | </li>
-                    <li> Drama | </li>
-                    <li> Thriller | </li>
-                    <li> War </li>
-                </ul>
-                <p>- 1h 53m</p>  
+                <h1>Generos</h1>
+                {% for gen in movie.genres.all%}
+                <td>
+                    <p> - {{ gen.name}} </p>
+                </td>
+                {% endfor %} 
             </div>         
             
             <h1>Overview</h1>
             <p>{{ movie.overview }}</p>
             <img src="{% static 'movies/assets/img/'|add:movie.poster_path %}" alt="imagen">
             <details>
-                <summary>Production Details</summary>
-                <p> Budget: $14,000,000.00 </p>
-                <p> Revenue: $233,555,708.00</p>
+                <summary>Movie Details</summary>
+                <p> Release date: {{ movie.release_date }} </p>
+                <p> Duración: {{ movie.running_time }} minutos</p>
             </details>
             </header>
         </div>
