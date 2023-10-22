@@ -1,0 +1,111 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>{{movie.title}}</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="{% static 'src/styles.css' %}" rel="stylesheet">
+</head>
+
+<body class="bg-gradient-to-r from-blue-900 to-gray-800 text-white mx-4">
+    <header class="h-12 w-full text-center mx-auto mt-5 border-b-2 border-sky-500">
+        <h1 class="font-medium text-3xl">MyMovies</h1>
+    </header>
+    <div>
+        <div class="h-[150px] sm:h-[250px] w-full bg-gray-600 rounded-[50px] opacity-50 mt-4">
+            <img src="{{movie.poster_path}}" class="w-full h-full object-cover rounded-[50px]">
+        </div>
+        <div
+            class="backdrop-blur-2xl w-2/3 sm:w-1/2 border-2 border-solid border-blue-900 text-center p-4 absolute rounded-xl ml-6 mt-[-32px] font-bold text-xl md:text-2xl">
+            <p class="font-normal text-sm">Movie</p>
+            {{movie.title}}
+        </div>
+    </div>
+
+
+    <div class="flex flex-col sm:flex-row mt-32  justify-center items-center h-fit">
+        <div class="w-3/4 sm:w-[300px] h-fit">
+            <img class="rounded-2xl" src="{{movie.poster_path}}">
+        </div>
+        <div class="flex-col  w-3/4">
+            <div class="flex-row justify-around flex mx-3 sm:mx-5 my-2 w-1/2 h-full">
+                <div class="flex-col items-center justify-center">
+                    <p class="font-light text-sm">Release date</p>
+                    <p>{{movie.release_date}}</p>
+                </div>
+                <div class="flex-col justify-center items-center">
+                    <p class="font-light text-sm">Run time</p>
+                    <p>{{movie.running_time}} minutes</p>
+                </div>
+            </div>
+            <div class="w-full mx-3 sm:mx-5 my-2 flex-col">
+                <p class="font-light text-sm">Overview</p>
+                <p>{{movie.overview}}</p>
+            </div>
+            <div class="flex-col mx-3 sm:mx-5 my-2 flex w-1/2 h-full">
+                <p class="font-light text-sm">Genres</p>
+                <div class="flex flex-row gap-2 mb-1">
+                    {% for gen in movie.genres.all %}
+                    <p>{{gen.name}}</p>
+                    {% endfor %}
+                </div>
+                <p class="font-light text-sm">Budget</p>
+                <p class="mb-1">$ {{movie.budget}}</p>
+                <p class="font-light text-sm">Revenue</p>
+                <p class="mb-1">$ {{movie.revenue}}</p>
+            </div>
+        </div>
+    </div>
+
+    <h1 class="font-bold text-xl md:text-3xl my-10">Top Billed Cast</h1>
+    <div class="relative flex items-center">
+        <div class="h-[290px] md:h-[350px] w-full flex gap-4 p-4 m-4 overflow-x-auto">
+            {% for m in movie_credits %}
+            {% if m.person.photo_path != "N/A" %}
+            <a href="/person/{{m.person.id}}/">
+                    <div class="w-[150px] md:w-[230px] inline-block h-full rounded-xl bg-gray-700 backdrop-blur-lg">
+                        <img src="{{m.person.photo_path}}"
+                            class="rounded-t-xl object-cover h-2/3 w-full transform transition duration-300 hover:scale-110"
+                            alt="{{m.person.name}}">
+
+                        <h2 class="text-base md:text-lg text-center font-semibold px-3">{{m.person.name}}</h2>
+                        <p class="px-3 text-center text-sm font-light">{{m.person.character}}</p>
+                    </div>
+            </a>
+            {%endif%}
+
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- <div class="flex flex-col mb-5">
+        
+        <div class="flex flex-col hover:overflow-x-visible relative">
+            <ul class="flex flex-row gap-4 h-[290px] md:h-[350px] w-full p-4">
+                {% for m in movie_credits %}
+                {% if m.person.photo_path != "N/A" %}
+                <a href="/person/{{m.person.id}}/">
+                    <li class="w-[150px] md:w-[230px] h-full flex-shrink-0">
+                        <div class="w-full h-full flex-col rounded-xl bg-gray-700 backdrop-blur-lg">
+                            <img src="{{m.person.photo_path}}"
+                                class="rounded-t-xl object-cover h-2/3 w-full transform transition duration-300 hover:scale-110"
+                                alt="{{m.person.name}}">
+
+                            <h2 class="text-base md:text-lg text-center font-semibold px-3">{{m.person.name}}</h2>
+                            <p class="px-3 text-center text-sm font-light">{{m.person.character}}</p>
+                        </div>
+                    </li>
+                </a>
+                {%endif%}
+
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <article></article> -->
+</body>
+
+</html>

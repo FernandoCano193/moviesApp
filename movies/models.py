@@ -33,7 +33,7 @@ class Person(models.Model):
 class Movie(models.Model):
     title = models.CharField(max_length=200)
     overview = models.TextField()
-    release_date = models.DateTimeField()
+    release_date = models.DateField()
     running_time = models.IntegerField()
     budget = models.IntegerField(blank=True)
     tmdb_id = models.IntegerField(blank=True, unique=True)
