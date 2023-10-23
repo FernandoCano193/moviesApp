@@ -10,17 +10,17 @@
 </head>
 <body class="bg-gradient-to-r from-blue-900 to-gray-800 text-white mx-4">
     <header class="h-12 w-full text-center mx-auto mt-5 border-b-2 border-sky-500">
-        <h1 class="font-medium text-3xl">MyMovies</h1>
+        <a href="/"><h1 class="font-medium text-3xl">MyMovies</h1></a>
     </header>
-    
-    <div class="flex flex-col sm:flex-row mt-32  justify-center items-center h-fit">
+
+    <div class="flex flex-col sm:flex-row mt-10 md:p-4 p-2  justify-center items-center h-fit">
         
         <div class="w-3/4 sm:w-[300px] h-fit">
             <img class="rounded-2xl" src="{{person.photo_path}}">
         </div>
-        <div class="flex-col  w-3/4">
-            <h3 class="font-bold text-4xl">{{person.name}}</h3>
-            <div class="flex-row justify-around flex mx-3 sm:mx-5 my-2 w-1/2 h-full">
+        <div class="flex-col  md:w-3/4 w-full">
+            <h3 class="font-bold text-4xl ml-4">{{person.name}}</h3>
+            <div class="flex-col md:flex-row justify-around w-3/4 flex mx-3 sm:mx-5 my-2 h-full">
                 <div class="flex-col items-center justify-center">
                     <p class="font-light text-sm">Gender</p>
                     <p>{{person.gender}}</p>
@@ -39,9 +39,10 @@
                 </div>
                 {%endif%}
             </div>
-            <div class="w-full mx-3 sm:mx-5 my-2 flex-col">
+            <div class="w-full mx-3 sm:mx-5 p-2 overflow-hidden my-2 flex-col">
                 <p class="font-light text-sm">Biography</p>
                 <p>{{person.biography}}</p>
+                
             </div>
         </div>
     </div>

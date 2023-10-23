@@ -71,7 +71,7 @@ def getPersonData(idPerson, character):
     else:
         photo = "N/A"
 
-    personData=(data.get('name'), character, gender, photo, data.get('birth_date'), data.get('place_birth'), data.get('biography'))
+    personData=(data.get('name'), character, gender, photo, data.get('birthday'), data.get('place_of_birth'), data.get('biography'))
     return personData
 
 
@@ -123,21 +123,18 @@ def load_movie(id):
         cur.execute(sqlQuery, (listGenre,))
         idGenres = cur.fetchall()
 
-        print(idGenres)
 
         # ----- JOBS ------
         cur.execute("SELECT name FROM movies_job")
         
         #lista de trabajos existentes en la bd
         existingJobs = cur.fetchall()
-        print(existingJobs)
 
         # lista de los trabajos en credits
         listJobs = getJobs(credits=credits)
 
         #Genera una tupla para poder hacer la comparacion
         listJobs=[(job,) for job in listJobs]
-        print(listJobs)
 
         newJobs=[]
 
@@ -206,7 +203,7 @@ def load_movie(id):
         #Confirma la transacción
         connect.commit()
 
-        print("Correcta conexión")
+        print("PELÍCULA NUEVA AGREGADA A LA BD")
 
     
     except Exception as Error:
