@@ -1,0 +1,65 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{% static 'src/styles.css' %}" rel="stylesheet">
+    <title>{{person.name}}</title>
+</head>
+<body class="bg-gradient-to-r from-blue-900 to-gray-800 text-white mx-4">
+    <header class="h-12 w-full text-center mx-auto mt-5 border-b-2 border-sky-500">
+        <a href="/"><h1 class="font-medium text-3xl">MyMovies</h1></a>
+    </header>
+
+    <div class="flex flex-col sm:flex-row mt-10 md:p-4 p-2  justify-center items-center h-fit">
+        
+        <div class="w-3/4 sm:w-[300px] h-fit">
+            <img class="rounded-2xl" src="{{person.photo_path}}">
+        </div>
+        <div class="flex-col  md:w-3/4 w-full">
+            <h3 class="font-bold text-4xl ml-4">{{person.name}}</h3>
+            <div class="flex-col md:flex-row justify-around w-3/4 flex mx-3 sm:mx-5 my-2 h-full">
+                <div class="flex-col items-center justify-center">
+                    <p class="font-light text-sm">Gender</p>
+                    <p>{{person.gender}}</p>
+                </div>
+                {%if person.birth_date != None%}
+                <div class="flex-col justify-center items-center">
+                    <p class="font-light text-sm">Date Birthday</p>
+                    <p>{{person.birth_date}}</p>
+                </div>
+                {%endif%}
+
+                {% if person.place_birth != None%}
+                <div class="flex-col justify-center items-center">
+                    <p class="font-light text-sm">Place of birth</p>
+                    <p>{{person.place_birth}}</p>
+                </div>
+                {%endif%}
+            </div>
+            <div class="w-full mx-3 sm:mx-5 p-2 overflow-hidden my-2 flex-col">
+                <p class="font-light text-sm">Biography</p>
+                <p>{{person.biography}}</p>
+                
+            </div>
+        </div>
+    </div>
+
+    <h1 class="font-bold text-xl md:text-3xl my-10">Known for</h1>
+    <div class="relative flex items-center">
+        <div class="h-[290px] md:h-[350px] w-full flex gap-4 p-4 m-4 overflow-x-auto">
+            {% for movie in credits %}
+            <a href="/movie/{{movie.movie.id}}/">
+                    <div class="w-40 sm:w-60 items-center justify-center p-2 transform transition duration-300 hover:scale-110">
+                        <img class="rounded-xl h-[200px] mx-auto" src={{movie.movie.poster_path}}>
+                        <h2 class="text-center font-medium">{{movie.movie.title}}</h2>
+                        <p class="text-center font-light">{{movie.movie.release_date}}</p>
+                    </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

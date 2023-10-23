@@ -1,0 +1,28 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyMovies App</title>
+    <link rel="stylesheet" href="{% static 'src/styles.css' %}">
+</head>
+
+<body class="bg-gradient-to-r from-blue-900 to-gray-800 text-white">
+    <h1 class="font-bold text-4xl text-center py-4">Wellcome to MyMovies</h1>
+    <div class="flex flex-wrap justify-center gap-4 px-4 py-3">
+        {% for movie in movies %}
+        <a href="movie/{{movie.id}}">
+            <div class="w-40 sm:w-60 items-center p-2 transform transition duration-300 hover:scale-110">
+                <img class="rounded-xl" src={{movie.poster_path}}>
+                <h2 class="text-center font-medium">{{movie.title}}</h2>
+                <p class="text-center font-light">{{movie.release_date}}</p>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</body>
+
+</html>

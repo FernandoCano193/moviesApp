@@ -22,9 +22,9 @@ class Person(models.Model):
     character = models.CharField(max_length=200, null=True)
     gender = models.CharField(max_length=10,null=True)
     photo_path = models.URLField(blank=True)
-    birth_date = models.DateField(null=True)
-    place_birth = models.CharField(max_length=200, blank=True)
-    biography = models.CharField(max_length=600, blank=True)
+    birth_date = models.DateField(null=True, blank=True)
+    place_birth = models.CharField(max_length=200, null=True,blank=True)
+    biography = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.name} ({self.character})"
@@ -33,7 +33,7 @@ class Person(models.Model):
 class Movie(models.Model):
     title = models.CharField(max_length=200)
     overview = models.TextField()
-    release_date = models.DateTimeField()
+    release_date = models.DateField()
     running_time = models.IntegerField()
     budget = models.IntegerField(blank=True)
     tmdb_id = models.IntegerField(blank=True, unique=True)
